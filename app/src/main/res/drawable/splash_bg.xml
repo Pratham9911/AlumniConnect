@@ -1,0 +1,14 @@
+<!-- res/drawable/splash_background.xml -->
+
+<!--For Instant window-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient
+                android:startColor="@color/pink"
+                android:endColor="@color/purple"
+                android:angle="315"/>
+        </shape>
+    </item>
+
+</layer-list>
