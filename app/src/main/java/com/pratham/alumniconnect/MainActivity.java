@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_profile) {
-                Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this,UserProfile.class));
+                finish();
             } else if (id == R.id.nav_settings) {
                 Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_about) {
