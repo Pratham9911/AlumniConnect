@@ -68,7 +68,8 @@ The app will allow users to join communities, track goals, engage with alumni, a
 
 ## 📜 **Project Journey**  
 - ✅ **May 2025** → Initial idea and concept discussion 
-- ✅ **June 2025** → Planning and designing 
+- ✅ **8 June 2025** → Started Project
+  
 
 
 ---
