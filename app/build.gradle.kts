@@ -36,7 +36,12 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.auth)
     implementation(libs.glide)
+    implementation(libs.firebase.firestore)
     annotationProcessor(libs.compiler)
+    implementation(libs.material)
+
+
+
 
     implementation(libs.play.services.auth)
     implementation(libs.firebase.auth.v2231)

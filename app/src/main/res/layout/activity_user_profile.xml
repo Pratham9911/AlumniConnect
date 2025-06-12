@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profileRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Classic circular loading animation -->
+    <FrameLayout
+        android:id="@+id/loadingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/profileLoading"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+
+<ScrollView
     android:id="@+id/usermain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,12 +48,14 @@
             >
 
             <!-- Background -->
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/bg_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/aaaa" />
+                android:src="@drawable/aaaa"
+                app:shapeAppearanceOverlay="@style/RoundedBottomImage" />
+
 
             <!-- Edit Icon -->
             <ImageView
@@ -40,16 +67,17 @@
                 android:background="@drawable/circle_bg"/>
 
             <!-- Profile Image Floating at Bottom Center -->
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="bottom|center_horizontal"
                 android:layout_marginBottom="-50dp"
-                android:background="@drawable/circle_bg"
-                android:src="@drawable/ic_user"
                 android:scaleType="centerCrop"
-                android:elevation="4dp" />
+                android:src="@drawable/aaaa"
+                android:elevation="4dp"
+                app:shapeAppearanceOverlay="@style/CircularImageView" />
+
         </FrameLayout>
 
         <!-- Push Content Down so It Doesn't Overlap Profile -->
@@ -64,7 +92,8 @@
             <!-- The rest of your layout continues below as-is -->
             <!-- Name -->
             <TextView
-                android:text="Pratham Tiwari"
+
+                android:id="@+id/nameText"
                 android:textColor="#2B2B66"
                 android:textStyle="bold"
                 android:textSize="18sp"
@@ -74,7 +103,8 @@
 
             <!-- Role -->
             <TextView
-                android:text="Student"
+
+                android:id="@+id/roleText"
                 android:textSize="14sp"
                 android:textColor="#666"
                 android:layout_marginTop="2dp"
@@ -83,7 +113,8 @@
 
             <!-- Studio -->
             <TextView
-                android:text="I2IT"
+
+                android:id="@+id/workplaceText"
                 android:textSize="14sp"
                 android:textColor="#666"
                 android:layout_marginTop="1dp"
@@ -104,7 +135,8 @@
                     android:src="@drawable/ic_location_placeholder" />
 
                 <TextView
-                    android:text="Pune, India"
+
+                    android:id="@+id/addressText"
                     android:textSize="13sp"
                     android:textColor="#666"
                     android:layout_marginLeft="4dp"
@@ -141,6 +173,8 @@
 
             </LinearLayout>
 
+
+
             <!-- Social Icons -->
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -148,22 +182,24 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center">
-
+                                <ImageView android:src="@drawable/ic_whatsapp" android:layout_width="26dp" android:layout_height="26dp" android:layout_margin="6dp"/>
+                                <ImageView android:src="@drawable/ic_linkedin" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>
+                                <ImageView android:src="@drawable/ic_facebook" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>
+                                <ImageView android:src="@drawable/ic_twitter" android:layout_width="20dp" android:layout_height="20dp" android:layout_margin="6dp"/>
             </LinearLayout>
-<!--                <ImageView android:src="@drawable/ic_twitter" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>-->
-<!--                <ImageView android:src="@drawable/ic_linkedin" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>-->
-<!--                <ImageView android:src="@drawable/ic_facebook" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>-->
 
             <!-- Bio -->
             <TextView
                 android:layout_width="match_parent"
+                android:id="@+id/bioText"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Heya, nice to meet you. I’m a freelance web designer and ui/ux designer from india. Student for life  like to learn something daily."
-                android:textColor="#444"
+                  android:textColor="#444"
                 android:textSize="14sp"
                 android:gravity="center"
-                android:lineSpacingExtra="4dp"/>
+                android:lineSpacingExtra="4dp"
+
+                />
 
             <!-- Divider with plus icon -->
             <RelativeLayout
@@ -224,3 +260,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+</FrameLayout>

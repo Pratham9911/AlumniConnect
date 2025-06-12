@@ -2,6 +2,7 @@ package com.pratham.alumniconnect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (id == R.id.nav_profile) {
                 startActivity(new Intent(this,UserProfile.class));
-                finish();
+
             } else if (id == R.id.nav_settings) {
                 Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_about) {
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             drawerLayout.closeDrawers();
+
             return true;
         });
 
@@ -98,32 +101,42 @@ public class MainActivity extends AppCompatActivity {
         TextView email = headerView.findViewById(R.id.header_email);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null){
-            String name=user.getDisplayName();
-            String mail=user.getEmail();
-            Uri photoUrl= user.getPhotoUrl();
-
-            //Set Information
-            username.setText(name != null ? name : "User");
+        if (user != null) {
+            String mail = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
             email.setText(mail != null ? mail : "example@example.com");
-           //set image
+
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(user.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String name = documentSnapshot.getString("name");
+                            username.setText(name != null ? name : "User");
+                        } else {
+                            username.setText("User");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("MainActivity", "Failed to fetch name", e);
+                        username.setText("User");
+                    });
+
             if (photoUrl != null) {
-                // You can use Glide or Picasso here
                 Glide.with(this)
                         .load(photoUrl)
-                        .placeholder(R.drawable.ic_user)  // fallback
+                        .placeholder(R.drawable.ic_user)
                         .circleCrop()
                         .into(profileImage);
             } else {
                 profileImage.setImageResource(R.drawable.ic_user);
             }
-
         } else {
-            // fallback if user is null
             username.setText("Guest");
             email.setText("guest@example.com");
             profileImage.setImageResource(R.drawable.ic_user);
         }
+
 
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
@@ -160,6 +173,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // ✅ Uncheck all drawer items when returning to MainActivity
+        if (navigationView != null) {
+            navigationView.getMenu().setGroupCheckable(0, true, false);
+            for (int i = 0; i < navigationView.getMenu().size(); i++) {
+                navigationView.getMenu().getItem(i).setChecked(false);
+            }
+            navigationView.getMenu().setGroupCheckable(0, true, true);
+        }
+    }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);

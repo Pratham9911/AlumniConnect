@@ -2,24 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="bottom"
     android:padding="14dp"
-    android:background="#98D5B1"
+
     android:orientation="vertical">
     <!--    default size 176 dp-->
+<!--    android:background="@drawable/bg_placeholder"-->
 
-
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/header_profile_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="16dp"
-
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_user"
-    android:background="@drawable/circle_background"
-    android:padding="2dp"
-    />
+        android:src="@drawable/aaaa"
+        android:padding="2dp"
+        android:background="@drawable/circle_background"
+        app:shapeAppearanceOverlay="@style/CircularImageView" />
+
 
 
     <TextView

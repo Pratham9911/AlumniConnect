@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -38,6 +39,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 
@@ -186,8 +190,10 @@ public class Login_Screen extends AppCompatActivity {
                                         if (authTask.isSuccessful()) {
                                             Log.d(TAG, "Login successful for email: " + email);
                                             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(this, MainActivity.class));
-                                            finish();
+                                            Intent intent = new Intent(this, MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+
                                         } else {
                                             Exception e = authTask.getException();
                                             Log.e(TAG, "Login failed: " + e.getMessage());
@@ -247,8 +253,14 @@ public class Login_Screen extends AppCompatActivity {
                                         if (authTask.isSuccessful()) {
                                             Log.d(TAG, "Registration successful for email: " + regEmail);
                                             Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(this, MainActivity.class));
-                                            finish();
+                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                            if (user != null) {
+                                                createUserInFirestore(user);
+                                            }
+                                            Intent intent = new Intent(this, MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+
                                         } else {
                                             Exception e = authTask.getException();
                                             Log.e(TAG, "Registration failed: " + e.getMessage());
@@ -314,8 +326,14 @@ public class Login_Screen extends AppCompatActivity {
                     .addOnSuccessListener(authResult -> {
                         Log.d(TAG, "GitHub Sign-In success (pending)");
                         Toast.makeText(this, "GitHub Sign-In Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user != null) {
+                            createUserInFirestore(user);
+                        }
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "GitHub Sign-In failed (pending): " + e.getMessage());
@@ -326,8 +344,14 @@ public class Login_Screen extends AppCompatActivity {
                     .addOnSuccessListener(authResult -> {
                         Log.d(TAG, "GitHub Sign-In success");
                         Toast.makeText(this, "GitHub Sign-In Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user != null) {
+                            createUserInFirestore(user);
+                        }
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "GitHub Sign-In failed: " + e.getMessage());
@@ -335,8 +359,6 @@ public class Login_Screen extends AppCompatActivity {
                     });
         }
     }
-
-
 
 
     // Start Google Sign-In
@@ -366,8 +388,15 @@ public class Login_Screen extends AppCompatActivity {
                                         if (authTask.isSuccessful()) {
                                             Log.d(TAG, "Google authentication successful");
                                             Toast.makeText(this, "Google Sign-In Successful", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(this, MainActivity.class));
-                                            finish();
+                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                            if (user != null) {
+                                                createUserInFirestore(user);
+                                            }
+
+                                            Intent intent = new Intent(this, MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+
                                         } else {
                                             Log.e(TAG, "Google authentication failed: " + authTask.getException().getMessage());
                                             Toast.makeText(this, "Google Authentication failed: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -381,13 +410,50 @@ public class Login_Screen extends AppCompatActivity {
         }
     }
 
+    private void createUserInFirestore(FirebaseUser user) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String uid = user.getUid();
 
+        DocumentReference userRef = db.collection("users").document(uid);
 
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (!document.exists()) {
 
+                    // Get name from registration EditText if available
+                    String name = "";
+                    EditText regNameEditText = findViewById(R.id.regNameEditText);
+                    if (regNameEditText != null) {
+                        name = regNameEditText.getText().toString().trim();
+                    }
+
+                    // Fallback to Firebase user's display name
+                    if (name.isEmpty() && user.getDisplayName() != null) {
+                        name = user.getDisplayName();
+                    }
+
+                    UserModel newUser = new UserModel(
+                            uid,
+                            name,
+                            user.getEmail(),
+                            user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "",
+                            "", // backgroundImageUrl
+                            "", // role
+                            "", // workplace
+                            "", // address
+                            ""  // bio
+                    );
+
+                    userRef.set(newUser)
+                            .addOnSuccessListener(aVoid -> Log.d("FIREBASE", "New user added"))
+                            .addOnFailureListener(e -> Log.e("FIREBASE", "Failed to add user", e));
+                }
+            } else {
+                Log.e("FIREBASE", "Failed to check user", task.getException());
+            }
+        });
+    }
 
 }
-
-
-
-
 
