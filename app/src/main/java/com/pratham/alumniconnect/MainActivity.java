@@ -2,6 +2,7 @@ package com.pratham.alumniconnect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -92,54 +93,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-//Fetch image and name from firebase
-        NavigationView navigationView = findViewById(R.id.navigation_drawer);
-        View headerView = navigationView.getHeaderView(0);
-
-        ImageView profileImage = headerView.findViewById(R.id.header_profile_image);
-        TextView username = headerView.findViewById(R.id.header_username);
-        TextView email = headerView.findViewById(R.id.header_email);
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String mail = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-            email.setText(mail != null ? mail : "example@example.com");
-
-            FirebaseFirestore.getInstance().collection("users")
-                    .document(user.getUid())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String name = documentSnapshot.getString("name");
-                            username.setText(name != null ? name : "User");
-                        } else {
-                            username.setText("User");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("MainActivity", "Failed to fetch name", e);
-                        username.setText("User");
-                    });
-
-            if (photoUrl != null) {
-                Glide.with(this)
-                        .load(photoUrl)
-                        .placeholder(R.drawable.ic_user)
-                        .circleCrop()
-                        .into(profileImage);
-            } else {
-                profileImage.setImageResource(R.drawable.ic_user);
-            }
-        } else {
-            username.setText("Guest");
-            email.setText("guest@example.com");
-            profileImage.setImageResource(R.drawable.ic_user);
-        }
+//fetch info
+        loadDrawerHeader();
 
 
-
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         bottomNav.setOnItemSelectedListener(item -> {
 
@@ -185,9 +143,57 @@ public class MainActivity extends AppCompatActivity {
             }
             navigationView.getMenu().setGroupCheckable(0, true, true);
         }
+        loadDrawerHeader();
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
+    private void loadDrawerHeader() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        View headerView = navigationView.getHeaderView(0);
+        ImageView profileImage = headerView.findViewById(R.id.header_profile_image);
+        TextView username = headerView.findViewById(R.id.header_username);
+        TextView email = headerView.findViewById(R.id.header_email);
+
+        if (user != null) {
+            String mail = user.getEmail();
+            email.setText(mail != null ? mail : "example@example.com");
+
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(user.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String name = documentSnapshot.getString("name");
+                            username.setText(name != null ? name : "User");
+
+                            String imageUrl = documentSnapshot.getString("profileImageUrl");
+                            if (!TextUtils.isEmpty(imageUrl)) {
+                                Glide.with(this)
+                                        .load(imageUrl)
+                                        .placeholder(R.drawable.default_user)
+                                        .circleCrop()
+                                        .into(profileImage);
+                            } else {
+                                profileImage.setImageResource(R.drawable.default_user);
+                            }
+                        } else {
+                            username.setText("User");
+                            profileImage.setImageResource(R.drawable.default_user);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("MainActivity", "Failed to fetch name or image", e);
+                        username.setText("User");
+                        profileImage.setImageResource(R.drawable.default_user);
+                    });
+        } else {
+            username.setText("Guest");
+            email.setText("guest@example.com");
+            profileImage.setImageResource(R.drawable.default_user);
+        }
+    }
+
 }

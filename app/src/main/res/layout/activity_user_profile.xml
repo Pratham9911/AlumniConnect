@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profileRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <!-- Classic circular loading animation -->
+    <!-- Loading -->
     <FrameLayout
         android:id="@+id/loadingContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:background="@android:color/white"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/profileLoading"
@@ -24,240 +24,293 @@
             android:layout_gravity="center" />
     </FrameLayout>
 
-
-<ScrollView
-    android:id="@+id/usermain"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/white">
-
-    <LinearLayout
+    <!-- Main Scroll View -->
+    <ScrollView
+        android:id="@+id/usermain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        >
+        android:clipToPadding="false">
 
-        <!-- Background Image with Profile Image Floating on Bottom -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:clipChildren="false"
-            >
-
-            <!-- Background -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/bg_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/aaaa"
-                app:shapeAppearanceOverlay="@style/RoundedBottomImage" />
-
-
-            <!-- Edit Icon -->
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end|top"
-                android:layout_margin="12dp"
-                android:src="@drawable/ic_edit_placeholder"
-                android:background="@drawable/circle_bg"/>
-
-            <!-- Profile Image Floating at Bottom Center -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="-50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/aaaa"
-                android:elevation="4dp"
-                app:shapeAppearanceOverlay="@style/CircularImageView" />
-
-        </FrameLayout>
-
-        <!-- Push Content Down so It Doesn't Overlap Profile -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="60dp"
-            android:paddingHorizontal="16dp"
-            android:gravity="center_horizontal">
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-            <!-- The rest of your layout continues below as-is -->
-            <!-- Name -->
-            <TextView
-
-                android:id="@+id/nameText"
-                android:textColor="#2B2B66"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <!-- Role -->
-            <TextView
-
-                android:id="@+id/roleText"
-                android:textSize="14sp"
-                android:textColor="#666"
-                android:layout_marginTop="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <!-- Studio -->
-            <TextView
-
-                android:id="@+id/workplaceText"
-                android:textSize="14sp"
-                android:textColor="#666"
-                android:layout_marginTop="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <!-- Location -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_location_placeholder" />
-
-                <TextView
-
-                    android:id="@+id/addressText"
-                    android:textSize="13sp"
-                    android:textColor="#666"
-                    android:layout_marginLeft="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <!-- Followers & Following -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp">
-
-                <TextView
-                    android:text="122\nfollowers"
-                    android:textAlignment="center"
-                    android:textColor="#2B2B66"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <Space android:layout_width="24dp" android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:text="67\nfollowing"
-                    android:textAlignment="center"
-                    android:textColor="#2B2B66"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-
-
-            <!-- Social Icons -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:gravity="center">
-                                <ImageView android:src="@drawable/ic_whatsapp" android:layout_width="26dp" android:layout_height="26dp" android:layout_margin="6dp"/>
-                                <ImageView android:src="@drawable/ic_linkedin" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>
-                                <ImageView android:src="@drawable/ic_facebook" android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="6dp"/>
-                                <ImageView android:src="@drawable/ic_twitter" android:layout_width="20dp" android:layout_height="20dp" android:layout_margin="6dp"/>
-            </LinearLayout>
-
-            <!-- Bio -->
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/bioText"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                  android:textColor="#444"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:lineSpacingExtra="4dp"
-
-                />
-
-            <!-- Divider with plus icon -->
+            <!-- Top Header Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
+                android:layout_height="200dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <View
+                <!-- Background Image -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/bg_image"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_centerVertical="true"
-                    android:background="#ccc" />
+                    android:layout_height="160dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_bg" />
 
+                <!-- Edit Background Icon -->
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_plus"
+                    android:id="@+id/edit_bg_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignTop="@id/bg_image"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="12dp"
+                    android:src="@drawable/ic_edit_placeholder"
+                    android:background="@drawable/circle_bg"
+                    android:padding="4dp" />
+
+                <!-- Profile Image with Edit Icon -->
+                <!-- Profile Image with Edit Icon -->
+                <FrameLayout
+                    android:id="@+id/profileImageContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/circle_bg2"
-                    android:padding="8dp"/>
+                    android:layout_alignBottom="@id/bg_image"
+                    android:translationY="50dp">
+
+                    <!-- Profile Image Wrapper with White Stroke -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        app:cardCornerRadius="55dp"
+                        app:cardElevation="6dp"
+                        app:strokeWidth="4dp"
+                        app:strokeColor="@android:color/white"
+                        app:cardBackgroundColor="@android:color/white">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/default_user"
+                            app:shapeAppearanceOverlay="@style/CircularImageView" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Edit Icon -->
+                    <ImageView
+                        android:id="@+id/edit_profile_icon"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:src="@drawable/ic_edit_placeholder"
+                        android:background="@drawable/circle_bg"
+                        android:padding="4dp"
+                        android:elevation="8dp"
+                        android:focusable="true" />
+                </FrameLayout>
+
+
             </RelativeLayout>
 
-            <!-- Experience -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Experience"
-                android:textColor="#2B2B66"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:gravity="start"/>
-
-            <TextView
+            <!-- Content Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Interior designer at Kaizen Design from 2023"
-                android:textColor="#666"
-                android:textSize="14sp"
-                android:layout_marginTop="4dp"/>
+                android:orientation="vertical"
+                android:paddingTop="20dp"
+                android:paddingHorizontal="16dp"
+                android:gravity="center_horizontal">
 
-            <!-- Post Section -->
-            <TextView
-                android:text="Posts"
-                android:textSize="16sp"
-                android:textColor="#2B2B66"
-                android:textStyle="bold"
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                <!-- Name -->
+                <TextView
+                    android:id="@+id/nameText"
+                    android:textColor="#2B2B66"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="4dp"
+                    android:text="Pratham Tiwari"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="centerCrop"
-              />
+                <!-- Role -->
+                <TextView
+                    android:id="@+id/roleText"
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="wrap_content"
+                    android:text="Designer"
+                    android:layout_height="wrap_content" />
+
+                <!-- Workplace -->
+                <TextView
+                    android:id="@+id/workplaceText"
+                    android:textSize="14sp"
+                    android:textColor="#666"
+                    android:text="company"
+                    android:layout_marginTop="1dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!-- Location -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_location_placeholder" />
+
+                    <TextView
+                        android:id="@+id/addressText"
+                        android:textSize="13sp"
+                        android:textColor="#666"
+                        android:text="Pune, India"
+                        android:layout_marginStart="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Followers -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:text="122\nfollowers"
+                        android:textAlignment="center"
+                        android:textColor="#2B2B66"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Space
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:text="67\nfollowing"
+                        android:textAlignment="center"
+                        android:textColor="#2B2B66"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Social Icons -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/whatsappIcon"
+                        android:src="@drawable/ic_whatsapp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_margin="6dp" />
+
+                    <ImageView
+                        android:id="@+id/linkedinIcon"
+                        android:src="@drawable/ic_linkedin"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="6dp" />
+
+                    <ImageView
+                        android:id="@+id/facebookIcon"
+                        android:src="@drawable/ic_facebook"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="6dp" />
+
+                    <ImageView
+                        android:id="@+id/twitterIcon"
+                        android:src="@drawable/ic_twitter"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="6dp" />
+                </LinearLayout>
+
+                <!-- Bio -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/bioText"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#444"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp" />
+
+                <!-- Divider with Plus Icon -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:background="#ccc" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_plus"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/circle_bg2"
+                        android:padding="8dp" />
+                </RelativeLayout>
+
+                <!-- Experience -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Experience"
+                    android:textColor="#2B2B66"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="start" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Interior designer at Kaizen Design from 2023"
+                    android:textColor="#666"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp" />
+
+                <!-- Post Section -->
+                <TextView
+                    android:text="Posts"
+                    android:textSize="16sp"
+                    android:textColor="#2B2B66"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="8dp"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
 </FrameLayout>
