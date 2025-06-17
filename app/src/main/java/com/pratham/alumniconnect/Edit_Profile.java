@@ -137,13 +137,15 @@ public class Edit_Profile extends AppCompatActivity {
                 });
     }
 
+
     private void uploadToCloudinaryAndSave() {
         if (selectedImageUri == null) return;
 
         Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
 
         MediaManager.get().upload(selectedImageUri)
-                .unsigned("alumni_unsigned")
+                .option("public_id", "user_profiles/profile_" + FirebaseAuth.getInstance().getUid())
+                .option("overwrite", true)
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {}
@@ -164,12 +166,11 @@ public class Edit_Profile extends AppCompatActivity {
                         Log.e("Cloudinary", err);  // 🔥 This will print the real error
                     }
 
-
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {}
                 }).dispatch();
-
     }
+
 
     private void saveProfile() {
         String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();

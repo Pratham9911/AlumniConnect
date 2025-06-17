@@ -227,13 +227,55 @@ public class UserProfile extends AppCompatActivity {
         bgPickerLauncher.launch(intent);
     }
 
+ //   private void uploadBackgroundToCloudinary()
+
+//    private void uploadBackgroundToCloudinary() {
+//        if (selectedBgUri == null) return;
+//
+//        Toast.makeText(this, "Uploading background...", Toast.LENGTH_SHORT).show();
+//
+//        MediaManager.get().upload(selectedBgUri)
+//                .unsigned(UPLOAD_PRESET)
+//                .callback(new UploadCallback() {
+//                    @Override
+//                    public void onStart(String requestId) {}
+//
+//                    @Override
+//                    public void onProgress(String requestId, long bytes, long totalBytes) {}
+//
+//                    @Override
+//                    public void onSuccess(String requestId, Map resultData) {
+//                        String bgUrl = (String) resultData.get("secure_url");
+//                        updateBackgroundUrlInFirestore(bgUrl);
+//                    }
+//
+//                    @Override
+//                    public void onError(String requestId, ErrorInfo error) {
+//                        Toast.makeText(UserProfile.this, "Upload failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
+//                        Log.e("Cloudinary", "Upload error: " + error.getDescription());
+//                    }
+//
+//                    @Override
+//                    public void onReschedule(String requestId, ErrorInfo error) {}
+//                })
+//                .dispatch();
+//
+//    }
+
+
     private void uploadBackgroundToCloudinary() {
         if (selectedBgUri == null) return;
 
         Toast.makeText(this, "Uploading background...", Toast.LENGTH_SHORT).show();
 
+        String uid = FirebaseAuth.getInstance().getUid();
+        String publicId = "bg_" + uid;
+
         MediaManager.get().upload(selectedBgUri)
-                .unsigned(UPLOAD_PRESET)
+                .option("public_id", publicId)
+                .option("overwrite", true)
+                .option("resource_type", "image")
+                .option("folder", "user_backgrounds/")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {}
@@ -257,8 +299,8 @@ public class UserProfile extends AppCompatActivity {
                     public void onReschedule(String requestId, ErrorInfo error) {}
                 })
                 .dispatch();
-
     }
+
 
     private void updateBackgroundUrlInFirestore(String bgUrl) {
         String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
