@@ -12,6 +12,11 @@
         android:title="Chats" />
 
     <item
+        android:enabled="false"
+        android:title=""
+
+        />
+    <item
         android:id="@+id/nav_connections"
         android:icon="@drawable/ic_connections"
         android:title="Connections" />

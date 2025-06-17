@@ -1,5 +1,6 @@
 package com.pratham.alumniconnect;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
@@ -24,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import android.net.Uri;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         });
         drawerLayout = findViewById(R.id.main);
         navigationView = findViewById(R.id.navigation_drawer);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
 
 // Drawer Toggle (hamburger icon)
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
@@ -127,6 +131,23 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             bottomNav.setSelectedItemId(R.id.nav_home);
         }
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Create Post")
+                        .setMessage("Do you want to write a new post?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // You can launch a new activity or do something else here
+                                Toast.makeText(MainActivity.this, "Opening post editor...", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
 
 
     }
