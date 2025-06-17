@@ -67,8 +67,9 @@ The app will allow users to join communities, track goals, engage with alumni, a
 ---
 
 ## 📜 **Project Journey**  
-- ✅ **May 2025** → Initial idea and concept discussion 
+- ✅ **May 2025** → Initial idea and concept Planning
 - ✅ **8 June 2025** → Started Project
+- ✅ **13 June 2025** → Implementing User Profile and Connecting with Firebase
   
 
 
