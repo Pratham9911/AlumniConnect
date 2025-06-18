@@ -29,6 +29,7 @@
                 android:gravity="center_vertical">
 
                 <ImageView
+                    android:id="@+id/back_arrow"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_back_arrow"
@@ -121,8 +122,7 @@
                     android:id="@+id/et_dob"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:inputType="none"
+                    android:inputType="date"
                     android:text="23/05/1995" />
             </com.google.android.material.textfield.TextInputLayout>
 

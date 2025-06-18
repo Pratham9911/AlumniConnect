@@ -268,32 +268,23 @@
                         android:background="#ccc" />
 
                     <ImageView
+                        android:id="@+id/addSectionBtn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_plus"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/circle_bg2"
                         android:padding="8dp" />
+
+
                 </RelativeLayout>
-
-                <!-- Experience -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Experience"
-                    android:textColor="#2B2B66"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="start" />
-
-                <TextView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/sectionRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Interior designer at Kaizen Design from 2023"
-                    android:textColor="#666"
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp" />
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="12dp" />
+
 
                 <!-- Post Section -->
                 <TextView

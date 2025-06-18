@@ -97,6 +97,13 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(v -> {
+
+            finish();
+        });
+
+
         fetchUserData();
     }
 
@@ -146,6 +153,11 @@ public class Edit_Profile extends AppCompatActivity {
         MediaManager.get().upload(selectedImageUri)
                 .option("public_id", "user_profiles/profile_" + FirebaseAuth.getInstance().getUid())
                 .option("overwrite", true)
+                .option("resource_type", "image")
+                .option("transformation", new com.cloudinary.Transformation()
+                        .width(500).height(500).crop("limit")  // Optional resize
+                        .quality("auto")
+                        .fetchFormat("auto"))
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {}
@@ -163,12 +175,13 @@ public class Edit_Profile extends AppCompatActivity {
                     public void onError(String requestId, ErrorInfo error) {
                         String err = "Upload failed: " + error.getDescription();
                         Toast.makeText(Edit_Profile.this, err, Toast.LENGTH_LONG).show();
-                        Log.e("Cloudinary", err);  // 🔥 This will print the real error
+                        Log.e("Cloudinary", err);
                     }
 
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {}
-                }).dispatch();
+                })
+                .dispatch();
     }
 
 
