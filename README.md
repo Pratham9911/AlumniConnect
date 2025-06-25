@@ -119,4 +119,3 @@ The app will allow users to join communities, track goals, engage with alumni, a
 
 ---
 
-This version uses emojis to break down the content, add some excitement, and keep the structure clean and readable. You can copy this into your README file!
