@@ -27,7 +27,8 @@ public class EntryDialog extends Dialog {
     }
 
     public EntryDialog(@NonNull Context context, OnEntrySavedListener listener, ActivityResultLauncher<Intent> launcher) {
-        super(context, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+        super(context, android.R.style.Theme_Material_Light_Dialog_Alert);
+
         setContentView(R.layout.dialog_entry);
 
         this.imagePickerLauncher = launcher;
@@ -35,12 +36,12 @@ public class EntryDialog extends Dialog {
         titleInput = findViewById(R.id.titleInput);
         subtitleInput = findViewById(R.id.subtitleInput);
         imagePreview = findViewById(R.id.entryImagePreview);
-        selectImageBtn = findViewById(R.id.selectImageBtn);
+//        selectImageBtn = findViewById(R.id.selectImageBtn);  ////Later Feature
         saveBtn = findViewById(R.id.saveEntryBtn);
 
         imagePreview.setVisibility(View.GONE);  // Initially hidden
 
-        selectImageBtn.setOnClickListener(v -> openImagePicker());
+//        selectImageBtn.setOnClickListener(v -> openImagePicker());  //Later Feature
 
         saveBtn.setOnClickListener(v -> {
             String title = titleInput.getText().toString().trim();

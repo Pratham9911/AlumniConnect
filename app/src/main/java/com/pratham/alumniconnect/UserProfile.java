@@ -133,11 +133,6 @@ public class UserProfile extends AppCompatActivity {
 
         setupProfileSections();
 
-
-
-
-
-
     }
 
     private void setupProfileSections() {

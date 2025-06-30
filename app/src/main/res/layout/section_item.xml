@@ -45,7 +45,15 @@
             android:layout_marginStart="6dp"
             android:src="@drawable/ic_delete"
             android:contentDescription="Delete Section" />
+
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/purple"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="45dp" />
 
     <!-- Entries RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
