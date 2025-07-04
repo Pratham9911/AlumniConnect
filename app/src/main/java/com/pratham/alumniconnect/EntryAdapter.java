@@ -20,9 +20,14 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.EntryViewHol
     private final List<EntryModel> entryList;
     private final Context context;
 
-    public EntryAdapter(List<EntryModel> entryList, Context context) {
+    // ✨ Added long press listener support
+    private final OnEntryActionListener actionListener;
+
+    // ✨ Updated constructor to accept long press listener
+    public EntryAdapter(List<EntryModel> entryList, Context context, OnEntryActionListener actionListener) {
         this.entryList = entryList;
         this.context = context;
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -54,6 +59,14 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.EntryViewHol
         } else {
             holder.entryImage.setVisibility(View.GONE);
         }
+
+        // ✨ Handle long press
+        holder.itemView.setOnLongClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onEntryLongPressed(entry);
+            }
+            return true;
+        });
     }
 
     @Override
@@ -71,5 +84,10 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.EntryViewHol
             entrySubtitle = itemView.findViewById(R.id.entrySubtitle);
             entryImage = itemView.findViewById(R.id.entryImage);
         }
+    }
+
+    // ✨ Interface for long-press actions
+    public interface OnEntryActionListener {
+        void onEntryLongPressed(EntryModel entry);
     }
 }

@@ -23,6 +23,9 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionV
         void onAddEntryClicked(SectionModel section);
         void onEditSection(SectionModel section);
         void onDeleteSection(SectionModel section);
+
+        // ✨ New method for entry long press
+        void onEntryLongPressed(EntryModel entry, SectionModel section);
     }
 
     public SectionAdapter(List<SectionModel> sectionList, Context context, OnSectionActionListener listener) {
@@ -48,8 +51,11 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionV
         holder.editBtn.setOnClickListener(v -> listener.onEditSection(section));
         holder.deleteBtn.setOnClickListener(v -> listener.onDeleteSection(section));
 
-        // Setup EntryAdapter
-        EntryAdapter entryAdapter = new EntryAdapter(section.getEntries(), context);
+        // ✨ Pass long press callback to EntryAdapter
+        EntryAdapter entryAdapter = new EntryAdapter(section.getEntries(), context, entry -> {
+            listener.onEntryLongPressed(entry, section);
+        });
+
         holder.entryRecycler.setLayoutManager(new LinearLayoutManager(context));
         holder.entryRecycler.setAdapter(entryAdapter);
     }

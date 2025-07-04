@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -135,6 +136,46 @@ public class UserProfile extends AppCompatActivity {
 
     }
 
+    private void showEntryOptionsDialog(EntryModel entry, SectionModel section) {
+        String[] options = {"Edit", "Delete"};
+
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Entry Options")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        // ✨ EDIT
+                        EntryDialog editDialog = new EntryDialog(UserProfile.this, updatedEntry -> {
+                            int index = section.getEntries().indexOf(entry);
+                            if (index != -1) {
+                                section.getEntries().set(index, updatedEntry);
+                                adapter.notifyDataSetChanged();
+                                saveSectionsToFirestore();
+                                Toast.makeText(this, "Entry updated", Toast.LENGTH_SHORT).show();
+                            }
+                        }, entryImagePickerLauncher);
+
+                        editDialog.setPreloadedEntry(entry);
+                        currentEntryDialog = editDialog;
+                        editDialog.show();
+
+                    } else if (which == 1) {
+                        // ✨ DELETE (with confirmation)
+                        new android.app.AlertDialog.Builder(this)
+                                .setTitle("Confirm Delete")
+                                .setMessage("Are you sure you want to delete this entry?\n\n\"" + entry.getTitle() + "\" will be removed permanently.")
+                                .setPositiveButton("Delete", (confirmDialog, confirmWhich) -> {
+                                    section.getEntries().remove(entry);
+                                    adapter.notifyDataSetChanged();
+                                    saveSectionsToFirestore();
+                                    Toast.makeText(this, "Entry deleted", Toast.LENGTH_SHORT).show();
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                    }
+                })
+                .show();
+    }
+
     private void setupProfileSections() {
         RecyclerView sectionRecyclerView = findViewById(R.id.sectionRecyclerView);
         sectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -143,6 +184,11 @@ public class UserProfile extends AppCompatActivity {
         sectionList.add(new SectionModel(UUID.randomUUID().toString(), "Education"));
 
         adapter = new SectionAdapter(sectionList, this, new SectionAdapter.OnSectionActionListener() {
+
+            @Override
+            public void onEntryLongPressed(EntryModel entry, SectionModel section) {
+                showEntryOptionsDialog(entry, section);
+            }
             @Override
             public void onAddEntryClicked(SectionModel section) {
                 EntryDialog dialog = new EntryDialog(UserProfile.this, entry -> {
@@ -157,16 +203,65 @@ public class UserProfile extends AppCompatActivity {
 
             @Override
             public void onEditSection(SectionModel section) {
-                Toast.makeText(UserProfile.this, "Edit section: " + section.getTitle(), Toast.LENGTH_SHORT).show();
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UserProfile.this);
+                builder.setTitle("Edit Section");
+
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_section, null); // reuse same layout
+                EditText titleInput = dialogView.findViewById(R.id.sectionTitleInput);
+                titleInput.setText(section.getTitle()); // ✨ pre-fill old title
+
+                builder.setView(dialogView);
+
+                builder.setPositiveButton("Save", (dialog, which) -> {
+                    String newTitle = titleInput.getText().toString().trim();
+                    if (!newTitle.isEmpty()) {
+                        section.setTitle(newTitle);
+                        adapter.notifyDataSetChanged(); // refresh list
+                        saveSectionsToFirestore();      // update in Firestore
+
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
             }
 
+
+
+            //delete the section from firebase and update the section
             @Override
             public void onDeleteSection(SectionModel section) {
-                sectionList.remove(section);
-                adapter.notifyDataSetChanged();
-                Toast.makeText(UserProfile.this, "Section deleted", Toast.LENGTH_SHORT).show();
-                saveSectionsToFirestore();  // ✅ Save after delete
+                android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(UserProfile.this)
+                        .setTitle("Delete Section")
+                        .setMessage("Are you sure you want to delete this section?\n\n\"" + section.getTitle() + "\" will be removed permanently.")
+                        .setPositiveButton("Delete", (dialogInterface, which) -> {
+                            sectionList.remove(section);
+                            adapter.notifyDataSetChanged();
+
+                            String uid = FirebaseAuth.getInstance().getUid();
+                            if (uid != null) {
+                                FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(uid)
+                                        .collection("profileSections")
+                                        .document(section.getSectionId())
+                                        .delete()
+                                        .addOnSuccessListener(unused -> Log.d("Firestore", "Section deleted"))
+                                        .addOnFailureListener(e -> Log.e("Firestore", "Failed to delete section", e));
+                            }
+
+                            Toast.makeText(UserProfile.this, "Section deleted", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+
+                dialog.show();
+
+                //setting red color to DELETE button after showing
+                dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(android.R.color.holo_red_dark));
             }
+
+
         });
 
         sectionRecyclerView.setAdapter(adapter);

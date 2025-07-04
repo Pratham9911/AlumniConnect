@@ -20,6 +20,8 @@ public class EntryDialog extends Dialog {
     private ImageView imagePreview;
     private Button selectImageBtn, saveBtn;
     private Uri selectedImageUri;
+    private EntryModel preloadedEntry; // ✨ for editing existing entries
+
     private final ActivityResultLauncher<Intent> imagePickerLauncher;
 
     public interface OnEntrySavedListener {
@@ -56,6 +58,22 @@ public class EntryDialog extends Dialog {
             listener.onEntrySaved(entry);
             dismiss();
         });
+    }
+    // ✨ Call this before .show() when editing an entry
+    public void setPreloadedEntry(EntryModel entry) {
+        this.preloadedEntry = entry;
+
+        // Pre-fill fields
+        if (entry != null) {
+            titleInput.setText(entry.getTitle());
+            subtitleInput.setText(entry.getSubtitle());
+
+            if (entry.getImageUrl() != null && !entry.getImageUrl().isEmpty()) {
+                selectedImageUri = Uri.parse(entry.getImageUrl());
+                imagePreview.setVisibility(View.VISIBLE);
+                imagePreview.setImageURI(selectedImageUri);
+            }
+        }
     }
 
     private void openImagePicker() {
