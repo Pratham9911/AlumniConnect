@@ -214,13 +214,30 @@ public class UserProfile extends AppCompatActivity {
 
                 builder.setPositiveButton("Save", (dialog, which) -> {
                     String newTitle = titleInput.getText().toString().trim();
+
                     if (!newTitle.isEmpty()) {
+                        // Capitalize first letter, lowercase the rest
+                        newTitle = newTitle.substring(0, 1).toUpperCase() +
+                                (newTitle.length() > 1 ? newTitle.substring(1).toLowerCase() : "");
+
+                        // ✅ Optional: Prevent duplicate section names
+                        for (SectionModel existing : sectionList) {
+                            if (!existing.getSectionId().equals(section.getSectionId()) &&
+                                    existing.getTitle().equalsIgnoreCase(newTitle)) {
+                                Toast.makeText(UserProfile.this, "Section with this name already exists", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
                         section.setTitle(newTitle);
                         adapter.notifyDataSetChanged(); // refresh list
                         saveSectionsToFirestore();      // update in Firestore
-
+                        Toast.makeText(UserProfile.this, "Section renamed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(UserProfile.this, "Title cannot be empty", Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
                 builder.setNegativeButton("Cancel", null);
                 builder.show();
@@ -282,13 +299,28 @@ public class UserProfile extends AppCompatActivity {
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             String title = titleInput.getText().toString().trim();
-            if (!title.isEmpty()) {
-                sectionList.add(new SectionModel(UUID.randomUUID().toString(), title));
-                adapter.notifyItemInserted(sectionList.size() - 1);
-                saveSectionsToFirestore();
-            } else {
+
+            if (title.isEmpty()) {
                 Toast.makeText(this, "Section title cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // ✅ Auto-capitalize first letter
+            title = title.substring(0, 1).toUpperCase() +
+                    (title.length() > 1 ? title.substring(1).toLowerCase() : "");
+
+            // 🚫 Check for duplicate titles (case-insensitive)
+            for (SectionModel existing : sectionList) {
+                if (existing.getTitle().equalsIgnoreCase(title)) {
+                    Toast.makeText(this, "Section with this title already exists", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            // ✅ Add new section
+            sectionList.add(new SectionModel(UUID.randomUUID().toString(), title));
+            adapter.notifyItemInserted(sectionList.size() - 1);
+            saveSectionsToFirestore();
         });
 
         builder.setNegativeButton("Cancel", null);

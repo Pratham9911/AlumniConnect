@@ -20,8 +20,17 @@
             android:id="@+id/subtitleInput"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="Subtitle (Optional)"
+            android:hint="Subtitle"
             android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/linkInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Link (optional)"
+            android:inputType="textUri"
+            android:layout_marginTop="8dp" />
+
 
         <ImageView
             android:id="@+id/entryImagePreview"

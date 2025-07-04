@@ -1,12 +1,16 @@
 package com.pratham.alumniconnect;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +71,26 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.EntryViewHol
             }
             return true;
         });
+
+        holder.entryTitle.setOnClickListener(v -> {
+            String url = entry.getLink();
+            if (!TextUtils.isEmpty(url)) {
+                if (Patterns.WEB_URL.matcher(url).matches()) {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://" + url;
+                    }
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        context.startActivity(intent);
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Unable to open link", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "Invalid link", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     @Override

@@ -20,4 +20,20 @@ public class EntryModel {
     public void setTitle(String title) { this.title = title; }
     public void setSubtitle(String subtitle) { this.subtitle = subtitle; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    private String link;
+
+    public EntryModel(String title, String subtitle, String imageUrl, String link) {
+        this.title = title;
+        this.subtitle = subtitle;
+        this.imageUrl = imageUrl;
+        this.link = link;
+    }
+    public String getLink() {
+        return link;
+    }
+    public void setLink(String link) {
+        this.link = link;
+    }
+
 }

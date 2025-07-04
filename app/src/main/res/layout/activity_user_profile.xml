@@ -278,12 +278,14 @@
 
 
                 </RelativeLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/sectionRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="12dp"
-                    android:paddingHorizontal="12dp" />
+                    android:paddingHorizontal="22dp" />
 
 
                 <!-- Post Section -->

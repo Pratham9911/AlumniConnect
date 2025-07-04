@@ -188,19 +188,71 @@ public class Edit_Profile extends AppCompatActivity {
     private void saveProfile() {
         String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("name", etName.getText().toString().trim());
-        updates.put("role", etRole.getText().toString().trim());
-        updates.put("workplace", etWorkplace.getText().toString().trim());
-        updates.put("dob", etDob.getText().toString().trim());
-        updates.put("country", etCountry.getText().toString().trim());
-        updates.put("bio", etBio.getText().toString().trim());
-        updates.put("whatsapp", etWhatsApp.getText().toString().trim());
-        updates.put("linkedin", etLinkedin.getText().toString().trim());
-        updates.put("facebook", etFacebook.getText().toString().trim());
-        updates.put("twitter", etTwitter.getText().toString().trim());
+        // Read inputs
+        String name = etName.getText().toString().trim();
+        String role = etRole.getText().toString().trim();
+        String workplace = etWorkplace.getText().toString().trim();
+        String dob = etDob.getText().toString().trim();
+        String country = etCountry.getText().toString().trim();
+        String bio = etBio.getText().toString().trim();
+        String whatsapp = etWhatsApp.getText().toString().trim();
+        String linkedin = etLinkedin.getText().toString().trim();
+        String facebook = etFacebook.getText().toString().trim();
+        String twitter = etTwitter.getText().toString().trim();
 
-        // Only update profileImageUrl if it's available (not null or empty)
+        // 🔍 Validate social links if not empty
+        if (!whatsapp.isEmpty() && !whatsapp.matches("^[0-9]{10,15}$")) {
+            Toast.makeText(this, "Invalid WhatsApp number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!linkedin.isEmpty()) {
+            if (!linkedin.startsWith("http://") && !linkedin.startsWith("https://")) {
+                linkedin = "https://" + linkedin;
+            }
+
+            if (!linkedin.matches("^https://(www\\.)?linkedin\\.com/.*$")) {
+                Toast.makeText(this, "Invalid LinkedIn URL", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+
+        if (!facebook.isEmpty()) {
+            if (!facebook.startsWith("http://") && !facebook.startsWith("https://")) {
+                facebook = "https://" + facebook;
+            }
+
+            if (!facebook.matches("^https://(www\\.)?facebook\\.com/.*$")) {
+                Toast.makeText(this, "Invalid Facebook URL", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+// ✅ Normalize and validate Twitter
+        if (!twitter.isEmpty()) {
+            if (!twitter.startsWith("http://") && !twitter.startsWith("https://")) {
+                twitter = "https://" + twitter;
+            }
+
+            if (!twitter.matches("^https://(www\\.)?twitter\\.com/.*$")) {
+                Toast.makeText(this, "Invalid Twitter URL", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        // ✅ Save if valid
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", name);
+        updates.put("role", role);
+        updates.put("workplace", workplace);
+        updates.put("dob", dob);
+        updates.put("country", country);
+        updates.put("bio", bio);
+        updates.put("whatsapp", whatsapp);
+        updates.put("linkedin", linkedin);
+        updates.put("facebook", facebook);
+        updates.put("twitter", twitter);
+
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             updates.put("profileImageUrl", profileImageUrl);
         }
