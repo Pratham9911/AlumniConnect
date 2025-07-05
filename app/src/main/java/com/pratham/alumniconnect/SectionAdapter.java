@@ -18,6 +18,7 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionV
     private final List<SectionModel> sectionList;
     private final Context context;
     private final OnSectionActionListener listener;
+    private boolean isOwnProfile;
 
     public interface OnSectionActionListener {
         void onAddEntryClicked(SectionModel section);
@@ -28,10 +29,11 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionV
         void onEntryLongPressed(EntryModel entry, SectionModel section);
     }
 
-    public SectionAdapter(List<SectionModel> sectionList, Context context, OnSectionActionListener listener) {
+    public SectionAdapter(List<SectionModel> sectionList, Context context, boolean isOwnProfile, OnSectionActionListener listener) {
         this.sectionList = sectionList;
         this.context = context;
         this.listener = listener;
+        this.isOwnProfile = isOwnProfile;
     }
 
     @NonNull
@@ -46,6 +48,11 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionV
         SectionModel section = sectionList.get(position);
 
         holder.sectionTitle.setText(section.getTitle());
+        if (!isOwnProfile) {
+            holder.addEntryBtn.setVisibility(View.GONE);
+            holder.editBtn.setVisibility(View.GONE);
+            holder.deleteBtn.setVisibility(View.GONE);
+        }
 
         holder.addEntryBtn.setOnClickListener(v -> listener.onAddEntryClicked(section));
         holder.editBtn.setOnClickListener(v -> listener.onEditSection(section));

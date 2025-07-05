@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -61,18 +63,36 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.syncState();
 
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar); // Attach toolbar
+        ImageView profileIcon = findViewById(R.id.profile_icon);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                toolbar,
-                R.string.open_drawer,
-                R.string.close_drawer
-        );
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+// ✅ Open drawer on profile icon click
+        profileIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+// ✅ Load profile image into toolbar icon
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(user.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        String imageUrl = documentSnapshot.getString("profileImageUrl");
+                        if (!TextUtils.isEmpty(imageUrl)) {
+                            Glide.with(this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.default_user)
+                                    .circleCrop()
+                                    .into(profileIcon);
+                        }
+                    });
+        }
+
+        EditText searchBar = findViewById(R.id.search_input);
+
+        searchBar.setFocusable(false);
+        searchBar.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, SearchActivity.class));
+        });
+
 
         // Handle drawer item clicks
         navigationView.setNavigationItemSelectedListener(item -> {

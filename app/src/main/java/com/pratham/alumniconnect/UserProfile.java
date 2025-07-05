@@ -63,6 +63,9 @@ public class UserProfile extends AppCompatActivity {
     private final String CLOUD_NAME = "dvt0ac7op";
     private final String UPLOAD_PRESET = "alumni_unsigned";
 
+    private boolean isOwnProfile = true; // default true, will be false if viewing others
+    private String viewedUid; // The UID being viewed
+
     private Uri selectedBgUri;
     ActivityResultLauncher<Intent> bgPickerLauncher;
 
@@ -82,6 +85,16 @@ public class UserProfile extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        viewedUid = getIntent().getStringExtra("uid");
+
+        if (viewedUid == null || viewedUid.equals(FirebaseAuth.getInstance().getUid())) {
+            isOwnProfile = true;
+            viewedUid = FirebaseAuth.getInstance().getUid();
+        } else {
+            isOwnProfile = false;
+        }
+
+
         // Views
         nameText = findViewById(R.id.nameText);
         roleText = findViewById(R.id.roleText);
@@ -95,6 +108,13 @@ public class UserProfile extends AppCompatActivity {
         linkedinIcon = findViewById(R.id.linkedinIcon);
         facebookIcon = findViewById(R.id.facebookIcon);
         twitterIcon = findViewById(R.id.twitterIcon);
+
+
+        if (!isOwnProfile) {
+            findViewById(R.id.edit_profile_icon).setVisibility(View.GONE);
+            findViewById(R.id.edit_bg_icon).setVisibility(View.GONE);
+            findViewById(R.id.addSectionBtn).setVisibility(View.GONE);
+        }
 
         ImageView editBgIcon = findViewById(R.id.edit_bg_icon);
         editBgIcon.setOnClickListener(v -> pickBackgroundImage());
@@ -181,16 +201,18 @@ public class UserProfile extends AppCompatActivity {
         sectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         sectionList = new ArrayList<>();
-        sectionList.add(new SectionModel(UUID.randomUUID().toString(), "Education"));
 
-        adapter = new SectionAdapter(sectionList, this, new SectionAdapter.OnSectionActionListener() {
+
+        adapter = new SectionAdapter(sectionList,this,isOwnProfile, new SectionAdapter.OnSectionActionListener() {
 
             @Override
             public void onEntryLongPressed(EntryModel entry, SectionModel section) {
+                if (!isOwnProfile) return;
                 showEntryOptionsDialog(entry, section);
             }
             @Override
             public void onAddEntryClicked(SectionModel section) {
+                if (!isOwnProfile) return;
                 EntryDialog dialog = new EntryDialog(UserProfile.this, entry -> {
                     section.getEntries().add(entry);
                     adapter.notifyDataSetChanged();
@@ -203,6 +225,7 @@ public class UserProfile extends AppCompatActivity {
 
             @Override
             public void onEditSection(SectionModel section) {
+                if (!isOwnProfile) return;
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UserProfile.this);
                 builder.setTitle("Edit Section");
 
@@ -248,6 +271,7 @@ public class UserProfile extends AppCompatActivity {
             //delete the section from firebase and update the section
             @Override
             public void onDeleteSection(SectionModel section) {
+                if (!isOwnProfile) return;
                 android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(UserProfile.this)
                         .setTitle("Delete Section")
                         .setMessage("Are you sure you want to delete this section?\n\n\"" + section.getTitle() + "\" will be removed permanently.")
@@ -397,8 +421,8 @@ public class UserProfile extends AppCompatActivity {
     }
 
     private void fetchAndShowUserData() {
-        String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-        DocumentReference userRef = db.collection("users").document(uid);
+        DocumentReference userRef = db.collection("users").document(viewedUid);
+
 
         userRef.get()
                 .addOnSuccessListener(document -> {
@@ -461,33 +485,34 @@ public class UserProfile extends AppCompatActivity {
     }
 
     private void saveSectionsToFirestore() {
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
+        if (!isOwnProfile) return; // ✅ Prevent saving if it's not your profile
+
+        if (viewedUid == null) return;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        var userDoc = db.collection("users").document(uid);
+        var userDoc = db.collection("users").document(viewedUid);
         var sectionColl = userDoc.collection("profileSections");
 
         for (SectionModel section : sectionList) {
             var sectionDoc = sectionColl.document(section.getSectionId());
 
-            // Step 1: Delete all existing entries in this section
+            // Step 1: Delete old entries
             sectionDoc.collection("entries")
                     .get()
                     .addOnSuccessListener(entrySnapshots -> {
                         for (var doc : entrySnapshots) {
-                            doc.getReference().delete(); // Delete each old entry
+                            doc.getReference().delete();
                         }
 
-                        // Step 2: Now (re)save section
+                        // Step 2: Save section
                         sectionDoc.set(section)
                                 .addOnSuccessListener(unused -> Log.d("Firestore", "Section saved: " + section.getTitle()))
                                 .addOnFailureListener(e -> Log.e("Firestore", "Failed to save section", e));
 
-                        // Step 3: Save all entries under it
+                        // Step 3: Save entries
                         for (EntryModel entry : section.getEntries()) {
                             sectionDoc.collection("entries")
-                                    .document()  // Auto ID
+                                    .document()
                                     .set(entry)
                                     .addOnFailureListener(e -> Log.e("Firestore", "Failed to save entry", e));
                         }
@@ -498,11 +523,10 @@ public class UserProfile extends AppCompatActivity {
     }
 
     private void loadSectionsFromFirestore() {
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
+        if (viewedUid == null) return;
 
         db.collection("users")
-                .document(uid)
+                .document(viewedUid)
                 .collection("profileSections")
                 .get()
                 .addOnSuccessListener(sectionSnapshots -> {
@@ -512,9 +536,8 @@ public class UserProfile extends AppCompatActivity {
                         SectionModel section = doc.toObject(SectionModel.class);
                         section.setSectionId(doc.getId());
 
-                        // Now fetch entries under this section
                         db.collection("users")
-                                .document(uid)
+                                .document(viewedUid)
                                 .collection("profileSections")
                                 .document(doc.getId())
                                 .collection("entries")
@@ -526,7 +549,7 @@ public class UserProfile extends AppCompatActivity {
                                         entries.add(entry);
                                     }
                                     section.setEntries(entries);
-                                    adapter.notifyDataSetChanged(); // Refresh for each section once entries are loaded
+                                    adapter.notifyDataSetChanged();
                                 });
 
                         sectionList.add(section);
